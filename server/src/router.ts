@@ -14,5 +14,12 @@ router.get("/api/items/:id", itemActions.read);
 router.post("/api/items", itemActions.add);
 
 /* ************************************************************************* */
+import sayActions from "./modules/say/sayActions";
+
+router.get("/", sayActions.sayWelcome);
+
+/* ************************************************************************* */
+import program from "./modules/program/programActions";
+router.get("/api/programs", program.browse);
 
 export default router;
