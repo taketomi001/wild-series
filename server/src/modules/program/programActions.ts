@@ -1,3 +1,7 @@
+// Import access to data
+import { title } from "node:process";
+import programRepository from "./programRepository";
+
 // Some data to make the trick
 
 const programs = [
@@ -23,23 +27,15 @@ const programs = [
   },
 ];
 
-// Declare the action
+// Declare the actions
 
 import type { RequestHandler } from "express";
 
-const browse: RequestHandler = (req, res) => {
-  if (req.query.q != null) {
-    const filteredPrograms = programs.filter((program) =>
-      program.synopsis.includes(req.query.q as string),
-    );
+const browse: RequestHandler = async (req, res) => {
+  const programsFromDB = await programRepository.readAll();
 
-    res.json(filteredPrograms);
-  } else {
-    res.json(programs);
-  }
+  res.json(programsFromDB);
 };
-
-//*****************************************************
 
 const read: RequestHandler = (req, res) => {
   const parsedId = Number.parseInt(req.params.id);
@@ -53,8 +49,72 @@ const read: RequestHandler = (req, res) => {
   }
 };
 
-//*****************************************************
+const edit: RequestHandler = async (req, res, next) => {
+  try {
+    // Update a specific category based on the provided ID
+    const programs = {
+      id: Number(req.params.id),
+      title: String(req.body.title),
+      synopsis: String(req.body.synopsis),
+      poster: String(req.body.poster),
+      country: String(req.body.country),
+      year: Number(req.body.year),
+      category_id: Number(req.body.category_id),
+    };
 
-// Export it to import it somewhere else
+    const affectedRows = await programRepository.update(programs);
 
-export default { browse, read };
+    // If the category is not found, respond with HTTP 404 (Not Found)
+    // Otherwise, respond with the category in JSON format
+    if (affectedRows === 0) {
+      res.sendStatus(404);
+    } else {
+      res.sendStatus(204);
+    }
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const destroy: RequestHandler = async (req, res, next) => {
+  try {
+    // Delete a specific category based on the provided ID
+    const programId = Number(req.params.id);
+
+    await programRepository.delete(programId);
+
+    // Respond with HTTP 204 (No Content) anyway
+    res.sendStatus(204);
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+const add: RequestHandler = async (req, res, next) => {
+  try {
+    // Extract the category data from the request body
+    const newProgram = {
+      title: String(req.body.title),
+      synopsis: String(req.body.synopsis),
+      poster: String(req.body.poster),
+      country: String(req.body.country),
+      year: Number(req.body.year),
+      category_id: Number(req.body.category_id),
+    };
+
+    // Create the category
+    const insertId = await programRepository.create(newProgram);
+
+    // Respond with HTTP 201 (Created) and the ID of the newly inserted item
+    res.status(201).json({ insertId });
+  } catch (err) {
+    // Pass any errors to the error-handling middleware
+    next(err);
+  }
+};
+
+// Export them to import them somewhere else
+
+export default { browse, read, edit, destroy, add };

@@ -7,7 +7,11 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 // Import the main app component
 import App from "./App";
-import Programs from "./pages/programs";
+import ProgramDetail from "./pages/ProgramDetail";
+import ProgramEdit from "./pages/ProgramEdit";
+import ProgramIndex from "./pages/ProgramIndex";
+import ProgramNew from "./pages/ProgramNew";
+import Program from "./pages/programs";
 
 // Import additional components for new routes
 
@@ -26,7 +30,17 @@ const router = createBrowserRouter([
     element: <App />, // Renders the App component for the home page
   },
   // Try adding a new route! For example, "/about" with an About component
-  { path: "/programs", element: <Programs /> },
+  {
+    path: "/programs",
+    element: <Program />,
+  },
+  {
+    path: "/programs/index",
+    element: <ProgramIndex />,
+  },
+  { path: "/programs/new", element: <ProgramNew /> },
+  { path: "/programs/edit", element: <ProgramEdit /> },
+  { path: "/programs/detail", element: <ProgramDetail /> },
 ]);
 
 /* ************************************************************************* */

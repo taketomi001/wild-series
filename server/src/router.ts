@@ -22,9 +22,13 @@ router.get("/", sayActions.sayWelcome);
 import program from "./modules/program/programActions";
 router.get("/api/programs", program.browse);
 router.get("/api/programs/:id", program.read);
+router.put("/api/programs/:id", program.edit);
+router.post("/api/programs", program.add);
+router.delete("/api/programs/:id", program.destroy);
 
 /* ************************************************************************* */
 import categoryAction from "./modules/category/categoryAction";
+// import programActions from "./modules/program/programActions";
 router.get("/api/categories", categoryAction.browse);
 router.get("/api/categories/:id", categoryAction.read);
 export default router;
