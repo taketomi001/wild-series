@@ -31,4 +31,7 @@ import categoryAction from "./modules/category/categoryAction";
 // import programActions from "./modules/program/programActions";
 router.get("/api/categories", categoryAction.browse);
 router.get("/api/categories/:id", categoryAction.read);
+router.put("/api/categories/:id", categoryAction.validate, categoryAction.edit);
+router.post("/api/categories", categoryAction.validate, categoryAction.add);
+router.delete("/api/categories/:id", categoryAction.destroy);
 export default router;
